@@ -1,6 +1,59 @@
 To deploy a machine learning model using Vertex AI and Kubernetes, follow these steps:
 
-Step 1: Prepare Your Model
+
+Step 1: Set Up GCP Environment
+		Create a GCP Project: Set up a new project in Google Cloud Platform.
+		Enable APIs: Enable the Vertex AI API, Kubernetes Engine API, and any other necessary APIs.
+		
+Step 2: Data Preparation
+		Data Storage: Store your retail data in Google Cloud Storage or BigQuery. Ensure the data includes historical sales, product information, and other relevant features.
+		Feature Engineering: Use Vertex AI Notebooks for data preprocessing and feature engineering.
+		
+		
+Step 3: Model Training with Vertex AI
+		Create a Vertex AI Notebook:
+
+		Navigate to Vertex AI in the GCP console.
+		Create a new Jupyter notebook.
+		Load Data and Train Model:
+
+		Load the sales data from BigQuery or Google Cloud Storage.
+		Use a Python library like TensorFlow or scikit-learn to train a demand forecasting model.
+		python
+		Copy code
+		import pandas as pd
+		from google.cloud import bigquery
+		from sklearn.model_selection import train_test_split
+		from xgboost import XGBRegressor
+		from sklearn.metrics import mean_squared_error
+
+		# Load data from BigQuery
+		client = bigquery.Client()
+		query = """
+		SELECT * FROM `project.dataset.sales_data`
+		"""
+		df = client.query(query).to_dataframe()
+
+		# Feature engineering
+		X = df.drop('sales', axis=1)
+		y = df['sales']
+
+		# Train-test split
+		X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+		# Train an XGBoost model
+		model = XGBRegressor(n_estimators=100)
+		model.fit(X_train, y_train)
+
+		# Evaluate the model
+		predictions = model.predict(X_test)
+		print(f'Mean Squared Error: {mean_squared_error(y_test, predictions)}')
+
+
+
+
+
+Step 4: Prepare Your Model
 		Train and Export Your Model:
 
 		Train your model using your preferred machine learning framework (e.g., TensorFlow, scikit-learn).
@@ -20,7 +73,7 @@ Step 1: Prepare Your Model
 		blob.upload_from_filename('model.joblib')
 
 
-Step 2: Create a Docker Image for Your Model
+Step 5: Create a Docker Image for Your Model
 		Write a Flask App:
 
 		Create a app.py file with Flask application to serve your model.
@@ -65,7 +118,7 @@ Step 2: Create a Docker Image for Your Model
 		docker build -t gcr.io/your-project-id/demand-forecasting:latest .
 		docker push gcr.io/your-project-id/demand-forecasting:latest
 		
-Step 3: Deploy the Model on Google Kubernetes Engine (GKE)
+Step 6: Deploy the Model on Google Kubernetes Engine (GKE)
 		Create a Kubernetes Cluster:
 
 		Create a GKE cluster.
@@ -118,7 +171,7 @@ Step 3: Deploy the Model on Google Kubernetes Engine (GKE)
 		Copy code
 		kubectl apply -f deployment.yaml
 		
-Step 4: Test the Deployment
+Step 7: Test the Deployment
 		Get the External IP Address:
 
 		Get the external IP address of the service.
@@ -132,7 +185,7 @@ Step 4: Test the Deployment
 		Copy code
 		curl -X POST http://<EXTERNAL_IP>/predict -H "Content-Type: application/json" -d '[{"feature1": value1, "feature2": value2, ...}]'
 		
-Step 5: Automate the Deployment with Vertex AI
+Step 8: Automate the Deployment with Vertex AI
 		Create a Custom Job in Vertex AI:
 
 		Define a custom job for your model training and deployment.
