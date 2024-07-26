@@ -30,24 +30,29 @@ Step 3: Model Training with Vertex AI
 		# Load data from BigQuery
 		client = bigquery.Client()
 		query = """
-		SELECT * FROM `project.dataset.sales_data`
+		SELECT * FROM `superb-reporter-430115-t3.sale_output.super_store_sales`
 		"""
 		df = client.query(query).to_dataframe()
 
 		# Feature engineering
-		X = df.drop('sales', axis=1)
-		y = df['sales']
-
+		X = df.drop('Sales', axis=1)
+		y = df['Sales']
+		# display(X)
+		# display(y)
 		# Train-test split
 		X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-		# Train an XGBoost model
+		# # Train an XGBoost model
 		model = XGBRegressor(n_estimators=100)
-		model.fit(X_train, y_train)
+		display(X_train)
+		display(y_train)
 
-		# Evaluate the model
-		predictions = model.predict(X_test)
+		model.fit(X_train._get_numeric_data(), y_train._get_numeric_data())
+
+		# # Evaluate the model
+		predictions = model.predict(X_test._get_numeric_data())
 		print(f'Mean Squared Error: {mean_squared_error(y_test, predictions)}')
+
 
 
 
