@@ -1,0 +1,39 @@
+gsutil cp -r gs://superb-reporter-430115-t3-ai-retail-model/test-model-deployment/ .
+
+superb-reporter-430115-t3-ai-retail-model/test-model-deployment
+
+
+cd test-model-deployment
+docker build -t gs://superb-reporter-430115-t3-ai-retail-model/test-model-deployment/model.dockerfile .
+
+
+docker tag my-python-app us-docker.pkg.dev/superb-reporter-430115-t3/gcr.io/churn-prediction:latest
+
+gcloud container clusters create demand-forecasting-cluster --num-nodes=1 --region=us-west1
+
+gcloud container clusters get-credentials demand-forecasting-cluster --region=us-west1
+
+kubectl apply -f deployment.yaml
+
+kubectl get services
+
+
+curl -X POST http://34.127.29.197/predict -H "Content-Type: application/json" -d '[{"feature1": value1, "feature2": value2, ...}]'
+
+curl -X POST http://34.118.233.193/churn-prediction -H "Content-Type: application/json" -d '[{"Sales": 34.2, "age": 30}]'
+
+gcloud components update
+
+gcloud components install gke-gcloud-auth-plugin
+
+gcloud info --run-diagnostics
+
+gcloud container clusters get-credentials demand-forecasting-cluster --region=us-west1 --project superb-reporter-430115-t3
+
+kubectl config current-context
+
+kubectl config get-contexts
+
+kubectl apply -f deployment.yaml --validate=false
+
+kubectl get pods 
